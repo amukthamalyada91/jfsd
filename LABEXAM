@@ -1,1 +1,88 @@
+xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+    
+    <!-- Bean for Employee -->
+    <bean id="employee" class="com.klef.jfsd.exam.Employee">
+        <constructor-arg value="101"/>
+        <constructor-arg value="John Doe"/>
+        <constructor-arg value="75000.0"/>
+        <constructor-arg value="true"/>
+        <constructor-arg>
+            <list>
+                <value>Java</value>
+                <value>Spring</value>
+                <value>SQL</value>
+            </list>
+        </constructor-arg>
+    </bean>
+
+    <!-- Bean for Instructor -->
+    <bean id="instructor" class="com.klef.jfsd.exam.Instructor">
+        <constructor-arg value="201"/>
+        <constructor-arg value="Dr. Smith"/>
+        <constructor-arg value="dr.smith@university.com"/>
+        <constructor-arg value="1234567890"/>
+    </bean>
+
+    <!-- Bean for Course, demonstrating setter autowiring -->
+    <bean id="course" class="com.klef.jfsd.exam.Course">
+        <constructor-arg value="301"/>
+        <constructor-arg value="Advanced Java"/>
+        <constructor-arg value="3"/>
+        <constructor-arg ref="instructor"/>
+    </bean>
+</beans>
+```
+
+#### Java Configuration (`ApplicationConfig.java`)
+
+```java
+package com.klef.jfsd.exam;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import java.util.Arrays;
+
+@Configuration
+public class ApplicationConfig {
+
+    @Bean
+    public Employee employee() {
+        return new Employee(101, "John Doe", 75000.0, true, Arrays.asList("Java", "Spring", "SQL"));
+    }
+
+    @Bean
+    public Instructor instructor() {
+        return new Instructor(201, "Dr. Smith", "dr.smith@university.com", "1234567890");
+    }
+
+    @Bean
+    public Course course() {
+        return new Course(301, "Advanced Java", 3, instructor());
+    }
+}
+package com.klef.jfsd.exam;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class ClientDemo {
+    public static void main(String[] args) {
+        // Using XML-based configuration
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
+
+        // Fetching beans from the container
+        Employee employee = (Employee) context.getBean("employee");
+        Course course = (Course) context.getBean("course");
+
+        // Displaying results
+        System.out.println("Employee Details: " + employee);
+        System.out.println("Course Details: " + course);
+    }
+}
 
